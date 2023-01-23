@@ -19,7 +19,7 @@ SO THAT I can keep a list of books to purchase
 
 ## Usage
 ![image](https://user-images.githubusercontent.com/97656734/213969609-b094ed7f-f822-4bbf-8627-5bea6ce3669c.png)
-THEN I am presented with several search results, each featuring a book’s title, author, description, image, and a link to that book on the Google Books site
+
 
 ## Technologies Used
 - React
