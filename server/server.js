@@ -2,13 +2,15 @@ const express = require('express');
 const path = require('path');
 const db = require('./config/connection');
 
-import { ApolloServer } from '@apollo/server';
-import { expressMiddleware } from '@apollo/server/express4';
-import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
-import http from 'http';
-import cors from 'cors';
-import { json } from 'body-parser';
-import { typeDefs, resolvers } from './schema/index';
+const { ApolloServer } = require("@apollo/server");
+const { expressMiddleware } = require(
+  "@apollo/server/express4");
+const { ApolloServerPluginDrainHttpServer } = require("@apollo/server/plugin/drainHttpServer");
+const http = require("http");
+const cors = require("cors");
+const bodyParser = require("body-parser");
+const { typeDefs, resolvers } = require("./schemas/index");
+const { authMiddleware } = require("./utils/auth");
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -30,19 +32,19 @@ app.get("/", (req, res) => {
 });
 
 const startApolloServer = async () => {
-await server.start();
-app.use(
-  '/',
-  cors(),
-  json(),
-  expressMiddleware(server, {
-    context: async ({ req }) => ({ token: req.headers.token }),
-  }),
-);
+  await server.start();
+  app.use(
+    '/',
+    cors(),
+    bodyParser.json(),
+    expressMiddleware(server, {
+      context: authMiddleware,
+    }),
+  );
 
-db.once('open', () => {
-  app.listen(PORT, () => console.log(`🌍 Now listening on localhost:${PORT}`));
-});
+  db.once('open', () => {
+    app.listen(PORT, () => console.log(`🌍 Now listening on localhost:${PORT}`));
+  });
 };
 
 startApolloServer();
